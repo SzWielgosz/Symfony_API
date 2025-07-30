@@ -14,6 +14,8 @@ RUN mv composer.phar /usr/local/bin/composer
 RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | bash
 RUN apt-get install -y symfony-cli
 
+RUN apt-get install -y unzip
+
 WORKDIR /app/
 
 COPY . .
