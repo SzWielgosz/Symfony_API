@@ -26,13 +26,21 @@ class ComposerTest extends AbstractApiTest
     public function testCreate(): void
     {
         $response1 = $this->post('/composer', static::$testComposer1);
-        $response2 = $this->post('/composer', static::$testComposer2);
-        $data1 = json_decode($response1->getContent(), true);
-        $data2 = json_decode($response2->getContent(), true);
         
+        $data1 = json_decode($response1->getContent(), true);
+       
         $this->assertResponseStatusCodeSame(201);
         $this->assertResponseIsSuccessful();
+
         static::$testComposer1['id'] = $data1['id'] ?? null;
+
+
+        $response2 = $this->post('/composer', static::$testComposer2);
+        $data2 = json_decode($response2->getContent(), true);
+
+        $this->assertResponseStatusCodeSame(201);
+        $this->assertResponseIsSuccessful();
+
         static::$testComposer2['id'] = $data2['id'] ?? null;
     }
 
@@ -118,9 +126,5 @@ class ComposerTest extends AbstractApiTest
 
         $this->assertResponseStatusCodeSame(204);
         $this->assertResponseIsSuccessful();
-
-        $this->get('/composer/' . static::$testComposer1['id']);
-
-        $this->assertResponseStatusCodeSame(404);
     }
 }

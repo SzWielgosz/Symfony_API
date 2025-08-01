@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\SymphonyRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: SymphonyRepository::class)]
 class Symphony
@@ -22,10 +23,15 @@ class Symphony
 
     #[ORM\ManyToOne(inversedBy: 'symphonies')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Ignore]
     private ?Composer $composer = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $created_at = null;
+
+    public function __construct() {
+        $this->created_at = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {

@@ -13,6 +13,7 @@ abstract class AbstractApiTest extends WebTestCase //Abstract class to avoid rep
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         parent::setUp();
         $this->client = static::createClient();
         $this->entityManager = $this->client->getContainer()->get('doctrine')->getManager();
@@ -20,6 +21,7 @@ abstract class AbstractApiTest extends WebTestCase //Abstract class to avoid rep
 
     public static function tearDownAfterClass(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $container = $client->getContainer();
         $entityManager = $container->get('doctrine')->getManager();
