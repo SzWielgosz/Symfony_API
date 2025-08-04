@@ -9,6 +9,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ComposerRepository::class)]
 class Composer
@@ -19,16 +20,22 @@ class Composer
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $lastName = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    #[Assert\NotBlank]
+    #[Assert\Type(\DateTimeInterface::class)]
     #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d'])]
     private ?\DateTimeImmutable $dateOfBirth = null;
 
     #[ORM\Column(length: 2)]
+    #[Assert\NotBlank]
+    #[Assert\Country]
     private ?string $countryCode = null;
 
     #[ORM\OneToMany(targetEntity: Symphony::class, mappedBy: 'composer', orphanRemoval: true)]

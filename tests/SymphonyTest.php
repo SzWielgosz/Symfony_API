@@ -18,18 +18,20 @@ class SymphonyTest extends AbstractApiTest
         'description' => 'Second Symphony description',
     ];
 
+    private static $testComposer = [
+        'firstName' => 'Ludwig',
+        'lastName' => 'Beethoven',
+        'dateOfBirth' => '1770-12-17',
+        'countryCode' => 'DE'
+    ];
+
 
     public function testCreate(): void
     {
-
-        $testComposer = [
-            'firstName' => 'Ludwig',
-            'lastName' => 'Beethoven',
-            'dateOfBirth' => '1770-12-17',
-            'countryCode' => 'DE'
-        ];
-        $composerResponse = $this->post('/composer', $testComposer);
+        $composerResponse = $this->post('/composer', static::$testComposer);
         $composer = json_decode($composerResponse->getContent(), true);
+        static::$testComposer['id'] = $composer['id'] ?? null;
+        
         $this->assertResponseStatusCodeSame(201);
         $this->assertResponseIsSuccessful();
 
@@ -51,6 +53,21 @@ class SymphonyTest extends AbstractApiTest
         $this->assertResponseIsSuccessful();
 
         static::$testSymphony2['id'] = $data2['id'] ?? null;
+    }
+
+
+    /**
+     * @depends testCreate
+     */
+    public function testCreateFailed(): void
+    {
+        $invalidSymphony = [
+            'name' => 'Invalid Symphony'
+        ];
+
+        static::$testSymphony1['composerId'] = static::$testComposer['id'];
+        $this->post('/symphony', $invalidSymphony);
+        $this->assertResponseStatusCodeSame(422);
     }
 
     /**

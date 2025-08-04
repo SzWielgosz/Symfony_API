@@ -12,7 +12,7 @@ class ComposerTest extends AbstractApiTest
         'firstName' => 'John',
         'lastName' => 'Doe',
         'dateOfBirth' => '1810-10-17',
-        'countryCode' => 'XD'
+        'countryCode' => 'US'
     ];
 
     private static $testComposer2 = [
@@ -42,6 +42,18 @@ class ComposerTest extends AbstractApiTest
         $this->assertResponseIsSuccessful();
 
         static::$testComposer2['id'] = $data2['id'] ?? null;
+    }
+
+    public function testCreateFailed(): void
+    {
+        $invalidComposer = [
+            'firstName' => 'Invalid',
+            'lastName' => 'Composer',
+            'dateOfBirth' => 'invalid-date',
+            'countryCode' => 'XX'
+        ];
+        $this->post('/composer', $invalidComposer);
+        $this->assertResponseStatusCodeSame(422);
     }
 
     /**

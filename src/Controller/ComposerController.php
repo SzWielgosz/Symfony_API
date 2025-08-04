@@ -9,8 +9,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ComposerController extends AbstractController
 {
@@ -27,21 +29,38 @@ class ComposerController extends AbstractController
     }
 
     #[Route('/composer', name: 'app_composer_create', methods: ['POST'])]
-    public function create(EntityManagerInterface $entityManager, SerializerInterface $serializer, Request $request): JsonResponse
+    public function create(EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator, Request $request): JsonResponse
     {
-        $composer = $serializer->deserialize($request->getContent(), Composer::class, 'json');
+        try {
+            $composer = $serializer->deserialize($request->getContent(), Composer::class, 'json');
+        } catch (NotNormalizableValueException|\Exception $e) {
+            return $this->json([
+                'error' => 'Invalid input data: ' . $e->getMessage(),
+            ], 422);
+        }
+
+        $errors = $validator->validate($composer);
+        if (count($errors) > 0) {
+            return $this->json(['errors' => (string) $errors], 422);
+        }
+
         $entityManager->persist($composer);
         $entityManager->flush();
 
-        return $this->json(data: $composer, status: 201);
+        return $this->json($composer, 201);
     }
 
     #[Route('/composer/{id}', name: 'app_composer_update', methods: ['PUT'])]
-    public function update(EntityManagerInterface $entityManager, SerializerInterface $serializer, Composer $composer, Request $request): JsonResponse
+    public function update(EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator, Composer $composer, Request $request): JsonResponse
     {
         $composer = $serializer->deserialize($request->getContent(), Composer::class, 'json', [
             AbstractNormalizer::OBJECT_TO_POPULATE => $composer // It will not create a new composer but override existing one
         ]);
+        $errors = $validator->validate($composer);
+        if (count($errors) > 0) {
+            return $this->json(['errors' => (string) $errors], 422);
+        }
+
         $entityManager->persist($composer);
         $entityManager->flush();
         return $this->json(data: $composer, status: 200);
