@@ -14,6 +14,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+#[Route('/api')]
 class SymphonyController extends AbstractController
 {
     #[Route('/symphony', name: 'app_symphony', methods: ['GET'])]

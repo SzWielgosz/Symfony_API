@@ -14,6 +14,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+#[Route('/api')]
 class ComposerController extends AbstractController
 {
     #[Route('/composer', name: 'app_composer', methods: ['GET'])]
