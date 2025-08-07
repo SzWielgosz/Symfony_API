@@ -28,7 +28,7 @@ class SymphonyTest extends AbstractApiTest
 
     public function testCreate(): void
     {
-        $composerResponse = $this->post('/composer', static::$testComposer);
+        $composerResponse = $this->post('/api/composer', static::$testComposer);
         $composer = json_decode($composerResponse->getContent(), true);
         static::$testComposer['id'] = $composer['id'] ?? null;
         
@@ -39,14 +39,14 @@ class SymphonyTest extends AbstractApiTest
         static::$testSymphony2['composerId'] = $composer['id'];
 
 
-        $response1 = $this->post('/symphony', static::$testSymphony1);
+        $response1 = $this->post('/api/symphony', static::$testSymphony1);
         $data1 = json_decode($response1->getContent(), true);
         $this->assertResponseStatusCodeSame(201);
         $this->assertResponseIsSuccessful();
 
         static::$testSymphony1['id'] = $data1['id'] ?? null;
 
-        $response2 = $this->post('/symphony', static::$testSymphony2);
+        $response2 = $this->post('/api/symphony', static::$testSymphony2);
 
         $data2 = json_decode($response2->getContent(), true);
         $this->assertResponseStatusCodeSame(201);
@@ -66,7 +66,7 @@ class SymphonyTest extends AbstractApiTest
         ];
 
         static::$testSymphony1['composerId'] = static::$testComposer['id'];
-        $this->post('/symphony', $invalidSymphony);
+        $this->post('/api/symphony', $invalidSymphony);
         $this->assertResponseStatusCodeSame(422);
     }
 
@@ -75,7 +75,7 @@ class SymphonyTest extends AbstractApiTest
      */
     public function testRead(): void
     {
-        $response = $this->get('/symphony');
+        $response = $this->get('/api/symphony');
         $content = $response->getContent();
 
         $this->assertResponseStatusCodeSame(200);
@@ -97,7 +97,7 @@ class SymphonyTest extends AbstractApiTest
      */
     public function testReadSpecific(): void
     {
-        $response = $this->get('/symphony/' . static::$testSymphony1['id']);
+        $response = $this->get('/api/symphony/' . static::$testSymphony1['id']);
         $content = $response->getContent();
 
         $this->assertResponseStatusCodeSame(200);
@@ -123,7 +123,7 @@ class SymphonyTest extends AbstractApiTest
 
         $findSymphony = $this->entityManager->getRepository(Symphony::class)->find(static::$testSymphony1['id']);
 
-        $data = $this->put('/symphony/' . $findSymphony->getId(), $newData);
+        $data = $this->put('/api/symphony/' . $findSymphony->getId(), $newData);
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertResponseIsSuccessful();
@@ -139,7 +139,7 @@ class SymphonyTest extends AbstractApiTest
      */
     public function testDelete(): void
     {
-        $this->delete('/symphony/' . static::$testSymphony1['id']);
+        $this->delete('/api/symphony/' . static::$testSymphony1['id']);
 
         $this->assertResponseStatusCodeSame(204);
         $this->assertResponseIsSuccessful();
