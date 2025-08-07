@@ -25,17 +25,17 @@ class ComposerTest extends AbstractApiTest
 
     public function testCreate(): void
     {
-        $response1 = $this->post('/composer', static::$testComposer1);
-        
+        $response1 = $this->post('/api/composer', static::$testComposer1);
+
         $data1 = json_decode($response1->getContent(), true);
-       
+
         $this->assertResponseStatusCodeSame(201);
         $this->assertResponseIsSuccessful();
 
         static::$testComposer1['id'] = $data1['id'] ?? null;
 
 
-        $response2 = $this->post('/composer', static::$testComposer2);
+        $response2 = $this->post('/api/composer', static::$testComposer2);
         $data2 = json_decode($response2->getContent(), true);
 
         $this->assertResponseStatusCodeSame(201);
@@ -52,7 +52,7 @@ class ComposerTest extends AbstractApiTest
             'dateOfBirth' => 'invalid-date',
             'countryCode' => 'XX'
         ];
-        $this->post('/composer', $invalidComposer);
+        $this->post('/api/composer', $invalidComposer);
         $this->assertResponseStatusCodeSame(422);
     }
 
@@ -61,7 +61,7 @@ class ComposerTest extends AbstractApiTest
      */
     public function testRead(): void
     {
-        $response = $this->get('/composer');
+        $response = $this->get('/api/composer');
         $content = $response->getContent();
 
         $this->assertResponseStatusCodeSame(200);
@@ -87,7 +87,7 @@ class ComposerTest extends AbstractApiTest
      */
     public function testReadSpecific(): void
     {
-        $response = $this->get('/composer/' . static::$testComposer1['id']);
+        $response = $this->get('/api/composer/' . static::$testComposer1['id']);
         $content = $response->getContent();
 
         $this->assertResponseStatusCodeSame(200);
@@ -116,7 +116,7 @@ class ComposerTest extends AbstractApiTest
 
         $findComposer = $this->entityManager->getRepository(Composer::class)->find(static::$testComposer1['id']);
 
-        $data = $this->put('/composer/' . $findComposer->getId(), $newData);
+        $data = $this->put('/api/composer/' . $findComposer->getId(), $newData);
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertResponseIsSuccessful();
@@ -134,7 +134,7 @@ class ComposerTest extends AbstractApiTest
      */
     public function testDelete(): void
     {
-        $this->delete('/composer/' . static::$testComposer1['id']);
+        $this->delete('/api/composer/' . static::$testComposer1['id']);
 
         $this->assertResponseStatusCodeSame(204);
         $this->assertResponseIsSuccessful();
