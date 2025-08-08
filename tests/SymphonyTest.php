@@ -4,6 +4,7 @@ namespace App\Tests;
 
 use AbstractApiTest;
 use App\Entity\Symphony;
+use App\Entity\Tag;
 
 class SymphonyTest extends AbstractApiTest
 {
@@ -28,6 +29,14 @@ class SymphonyTest extends AbstractApiTest
 
     public function testCreate(): void
     {
+        $tag = new Tag();
+        $tag->setName('Baroque');
+        $this->entityManager->persist($tag);
+        $this->entityManager->flush();
+
+        static::$testSymphony1['tagId'] = $tag->getId();
+        static::$testSymphony2['tagId'] = $tag->getId();
+
         $composerResponse = $this->post('/api/composer', static::$testComposer);
         $composer = json_decode($composerResponse->getContent(), true);
         static::$testComposer['id'] = $composer['id'] ?? null;
